@@ -1,13 +1,12 @@
 import { nanoid } from 'nanoid';
 import css from './ContactForm.module.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { createContact } from 'store/slice';
-import { getContacts } from 'store/selectors';
+import { addContact } from 'store/thunks';
+import { selectorFilteredProducts } from 'store/selectors';
 
 const ContactForm = () => {
   const dispatch = useDispatch();
-  const contactsSel = useSelector(getContacts);
-  const { contacts } = contactsSel;
+  const contacts = useSelector(selectorFilteredProducts);
 
   const idName = nanoid();
   const idNumber = nanoid();
@@ -16,7 +15,7 @@ const ContactForm = () => {
     event.preventDefault();
     const form = event.target;
     const name = form.name.value;
-    const value = form.number.value;
+    const phone = form.number.value;
     if (
       contacts.find(
         ({ name: nameCont }) => nameCont.toLowerCase() === name.toLowerCase()
@@ -25,7 +24,7 @@ const ContactForm = () => {
       alert(`${name} is already in contacts.`);
       return;
     }
-    dispatch(createContact({ name, value }));
+    dispatch(addContact({ name, phone }));
   };
 
   return (

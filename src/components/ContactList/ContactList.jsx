@@ -1,25 +1,24 @@
 import css from './ContactList.module.css';
-import { getContacts } from 'store/selectors';
+import { selectorFilteredProducts } from 'store/selectors';
 import { useSelector, useDispatch } from 'react-redux';
-import { deleteContact } from 'store/slice';
+import { deleteContact, getAllContacts } from 'store/thunks';
+import { useEffect } from 'react';
 
 export const ContactList = () => {
-  const contactSel = useSelector(getContacts);
-  const { contacts, filter } = contactSel;
+  const contacts = useSelector(selectorFilteredProducts);
   const dispatch = useDispatch();
 
-  const normalizeFilter = filter.toLowerCase();
-  const visibleContacts = contacts.filter(contact =>
-    contact.name.toLowerCase().includes(normalizeFilter)
-  );
+  useEffect(() => {
+    !contacts && dispatch(getAllContacts());
+  }, [dispatch, contacts]);
 
   return (
     <ul className={css.contactList}>
       {contacts &&
-        visibleContacts.map(({ id, name, value }) => {
+        contacts.map(({ id, name, phone }) => {
           return (
             <li key={id} className={css.contactItem}>
-              {name}: {value}
+              {name}: {phone}
               <button
                 type="button"
                 className={css.btn}
